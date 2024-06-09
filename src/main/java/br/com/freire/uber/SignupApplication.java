@@ -3,6 +3,7 @@ package br.com.freire.uber;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.http.ResponseEntity;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.web.bind.annotation.*;
 
@@ -22,18 +23,18 @@ public class SignupApplication {
     }
 
     @PostMapping("/signup")
-    public SignupResponse signup(@RequestBody SignupRequest request) {
+    public ResponseEntity<SignupResponse> signup(@RequestBody SignupRequest request) {
         UUID id = UUID.randomUUID();
         String sql = "SELECT * FROM cccat16.account WHERE email = ?";
         var acc = jdbcTemplate.queryForList(sql, request.getEmail());
-        if (!acc.isEmpty()) return new SignupResponse(-4);
-        if (!(Pattern.matches("[a-zA-Z]+ [a-zA-Z]+", request.getName()))) return new SignupResponse(-3);
-        if (!Pattern.matches("^(.+)@(.+)$", request.getEmail())) return new SignupResponse(-2);
-        if (!validateCpf(request.getCpf())) return new SignupResponse(-1);
-        if (request.isDriver()  && !request.getCarPlate().isEmpty() && !Pattern.matches("[A-Z]{3}[0-9]{4}", request.getCarPlate())) return new SignupResponse(-5);
+        if (!acc.isEmpty()) return ResponseEntity.unprocessableEntity().body(new SignupResponse(-4));
+        if (!(Pattern.matches("[a-zA-Z]+ [a-zA-Z]+", request.getName()))) return ResponseEntity.unprocessableEntity().body(new SignupResponse(-3));
+        if (!Pattern.matches("^(.+)@(.+)$", request.getEmail())) return ResponseEntity.unprocessableEntity().body(new SignupResponse(-2));
+        if (!validateCpf(request.getCpf())) ResponseEntity.unprocessableEntity().body( new SignupResponse(-1));
+        if (request.isDriver()  && !request.getCarPlate().isEmpty() && !Pattern.matches("[A-Z]{3}[0-9]{4}", request.getCarPlate())) ResponseEntity.unprocessableEntity().body( new SignupResponse(-5));
         jdbcTemplate.update("INSERT INTO cccat16.account (account_id, name, email, cpf, car_plate, is_passenger, is_driver) VALUES (?, ?, ?, ?, ?, ?, ?)",
                 id, request.getName(), request.getEmail(), request.getCpf(), request.getCarPlate(), request.isPassenger(), request.isDriver());
-        return new SignupResponse(id.toString());
+        return ResponseEntity.ok().body(new SignupResponse(id.toString()));
     }
 
     @GetMapping("/accounts/{accountId}")

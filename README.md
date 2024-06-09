@@ -11,3 +11,4 @@ Code Smells
 
 - if aninhados
   - early return para resolver
+- espaços em branco
