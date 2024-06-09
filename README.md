@@ -14,3 +14,4 @@ Code Smells
 - espaços em branco
 
 Separação de responsabilidade entre Api, Application, Resource.
+Isso fez a possibilidade de fazer testes apenas da camada de aplicação
