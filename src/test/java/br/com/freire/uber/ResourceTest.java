@@ -6,8 +6,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import java.util.Map;
+import java.util.Optional;
+import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @SpringBootTest
 class ResourceTest {
@@ -23,6 +26,8 @@ class ResourceTest {
         String expectedCpf = "87748248800";
 
         Application.Account account = new Application.Account();
+        account.setAccountId(UUID.randomUUID().toString());
+
         account.setName(expectedName);
         account.setEmail(expectedEmail);
         account.setCpf(expectedCpf);
@@ -31,7 +36,11 @@ class ResourceTest {
 
         String accountId = resource.saveAccount(account);
 
-        Map<String, Object> savedAccountById = resource.getAccountById(accountId);
+        Optional<Map<String, Object>> optionalSavedAccountById = resource.getAccountById(accountId);
+
+        assertTrue(optionalSavedAccountById.isPresent(), "Esperado que a conta salva esteja presente");
+
+        Map<String, Object> savedAccountById = optionalSavedAccountById.get();
 
         assertEquals(expectedName, savedAccountById.get("name"));
         assertEquals(expectedEmail, savedAccountById.get("email"));
@@ -46,6 +55,7 @@ class ResourceTest {
         String expectedCpf = "87748248800";
 
         Application.Account account = new Application.Account();
+        account.setAccountId(UUID.randomUUID().toString());
         account.setName(expectedName);
         account.setEmail(expectedEmail);
         account.setCpf(expectedCpf);
@@ -54,7 +64,11 @@ class ResourceTest {
 
         resource.saveAccount(account);
 
-        Map<String, Object> savedAccountByEmail = resource.getAccountByEmail(expectedEmail);
+        Optional<Map<String, Object>> optionalSavedAccountByEmail = resource.getAccountByEmail(expectedEmail);
+
+        assertTrue(optionalSavedAccountByEmail.isPresent(), "Esperado que a conta salva esteja presente");
+
+        Map<String, Object> savedAccountByEmail = optionalSavedAccountByEmail.get();
 
         assertEquals(expectedName, savedAccountByEmail.get("name"));
         assertEquals(expectedEmail, savedAccountByEmail.get("email"));

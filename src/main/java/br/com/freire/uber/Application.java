@@ -1,10 +1,8 @@
 package br.com.freire.uber;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
 
-import java.util.Map;
 import java.util.UUID;
 import java.util.regex.Pattern;
 
@@ -12,38 +10,46 @@ import java.util.regex.Pattern;
 public class Application {
 
     @Autowired
-    private JdbcTemplate jdbcTemplate;
+    private Resource resource;
 
     public Api.SignupResponse signup(Api.SignupRequest input) {
-        UUID id = UUID.randomUUID();
-        String sql = "SELECT * FROM cccat16.account WHERE email = ?";
-        var acc = jdbcTemplate.queryForList(sql, input.getEmail());
-        if (!acc.isEmpty()) return new Api.SignupResponse(-4);
+        UUID accountId = UUID.randomUUID();
+        var existingAccount = resource.getAccountByEmail(input.getEmail());
+        if (existingAccount.isPresent()) return new Api.SignupResponse(-4);
         if (!(Pattern.matches("[a-zA-Z]+ [a-zA-Z]+", input.getName()))) return new Api.SignupResponse(-3);
         if (!Pattern.matches("^(.+)@(.+)$", input.getEmail())) return new Api.SignupResponse(-2);
         if (!validateCpf(input.getCpf())) return new Api.SignupResponse(-1);
         if (input.isDriver() && !input.getCarPlate().isEmpty() && !Pattern.matches("[A-Z]{3}[0-9]{4}", input.getCarPlate()))
             return new Api.SignupResponse(-5);
-        jdbcTemplate.update("INSERT INTO cccat16.account (account_id, name, email, cpf, car_plate, is_passenger, is_driver) VALUES (?, ?, ?, ?, ?, ?, ?)",
-                id, input.getName(), input.getEmail(), input.getCpf(), input.getCarPlate(), input.isPassenger(), input.isDriver());
-        return new Api.SignupResponse(id.toString());
+        resource.saveAccount(mapperInputToAccount(input, accountId.toString()));
+        return new Api.SignupResponse(accountId.toString());
+    }
+
+    private Account mapperInputToAccount(Api.SignupRequest input, String accountId) {
+        Account account = new Account();
+        account.setAccountId(accountId);
+        account.setCpf(input.getCpf());
+        account.setDriver(input.isDriver());
+        account.setEmail(input.getEmail());
+        account.setPassenger(input.isPassenger());
+        account.setCarPlate(input.getCarPlate());
+        account.setName(input.getName());
+        return account;
     }
 
     public Account getAccount(String accountId) {
-        String sql = "SELECT * FROM cccat16.account WHERE account_id = ?";
-        Map<String, Object> result = jdbcTemplate.queryForMap(sql, accountId);
-
-        Account account = new Account();
-        account.setAccountId(((UUID) result.get("account_id")).toString());
-        account.setName((String) result.get("name"));
-        account.setEmail((String) result.get("email"));
-        account.setCpf((String) result.get("cpf"));
-        account.setCarPlate((String) result.get("car_plate"));
-        account.setPassenger((Boolean) result.get("is_passenger"));
-        account.setDriver((Boolean) result.get("is_driver"));
-
-        return account;
-
+        return resource.getAccountById(accountId).map(result -> {
+                    Account account = new Account();
+                    account.setAccountId(((UUID) result.get("account_id")).toString());
+                    account.setName((String) result.get("name"));
+                    account.setEmail((String) result.get("email"));
+                    account.setCpf((String) result.get("cpf"));
+                    account.setCarPlate((String) result.get("car_plate"));
+                    account.setPassenger((Boolean) result.get("is_passenger"));
+                    account.setDriver((Boolean) result.get("is_driver"));
+                    return account;
+                })
+                .orElse(null);
     }
 
     private boolean validateCpf(String cpf) {
