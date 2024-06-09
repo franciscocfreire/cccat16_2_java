@@ -13,5 +13,9 @@ Code Smells
   - early return para resolver
 - espaços em branco
 
-Separação de responsabilidade entre Api, Application, Resource.
+Separação de responsabilidade entre Api, Application.
+
 Isso fez a possibilidade de fazer testes apenas da camada de aplicação
+
+Separação de responsabilidade do Resource(Driven Actor)
+
