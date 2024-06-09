@@ -18,7 +18,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.springframework.test.util.AssertionErrors.fail;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-public class SignupApplicationTests {
+public class ApiTests {
 
     @LocalServerPort
     private int port;
@@ -37,16 +37,16 @@ public class SignupApplicationTests {
         HttpHeaders headers = new HttpHeaders();
         headers.add("Content-Type", "application/json");
 
-        SignupApplication.SignupRequest request = new SignupApplication.SignupRequest();
+        Api.SignupRequest request = new Api.SignupRequest();
         request.setName(expectedName);
         request.setEmail(expectedEmail);
         request.setCpf(expectedCpf);
         request.setPassenger(true);
         request.setDriver(false);
 
-        HttpEntity<SignupApplication.SignupRequest> entity = new HttpEntity<>(request, headers);
+        HttpEntity<Api.SignupRequest> entity = new HttpEntity<>(request, headers);
 
-        ResponseEntity<SignupApplication.SignupResponse> responseSignup = restTemplate.exchange(urlSignup, HttpMethod.POST, entity, SignupApplication.SignupResponse.class);
+        ResponseEntity<Api.SignupResponse> responseSignup = restTemplate.exchange(urlSignup, HttpMethod.POST, entity, Api.SignupResponse.class);
 
         assertEquals(HttpStatus.OK, responseSignup.getStatusCode());
         assertNotNull(responseSignup.getBody());
@@ -75,21 +75,21 @@ public class SignupApplicationTests {
         HttpHeaders headers = new HttpHeaders();
         headers.add("Content-Type", "application/json");
 
-        SignupApplication.SignupRequest request = new SignupApplication.SignupRequest();
+        Api.SignupRequest request = new Api.SignupRequest();
         request.setName(expectedName);
         request.setEmail(expectedEmail);
         request.setCpf(expectedCpf);
         request.setPassenger(true);
         request.setDriver(false);
 
-        HttpEntity<SignupApplication.SignupRequest> entity = new HttpEntity<>(request, headers);
+        HttpEntity<Api.SignupRequest> entity = new HttpEntity<>(request, headers);
 
         try {
-            ResponseEntity<SignupApplication.SignupResponse> responseSignup = restTemplate.exchange(urlSignup, HttpMethod.POST, entity, SignupApplication.SignupResponse.class);
+            ResponseEntity<Api.SignupResponse> responseSignup = restTemplate.exchange(urlSignup, HttpMethod.POST, entity, Api.SignupResponse.class);
             fail("Expected HttpClientErrorException.UnprocessableEntity");
         } catch (HttpClientErrorException.UnprocessableEntity ex) {
             assertEquals(HttpStatus.UNPROCESSABLE_ENTITY, ex.getStatusCode());
-            SignupApplication.SignupResponse responseSignup = new ObjectMapper().readValue(ex.getResponseBodyAsString(), SignupApplication.SignupResponse.class);
+            Api.SignupResponse responseSignup = new ObjectMapper().readValue(ex.getResponseBodyAsString(), Api.SignupResponse.class);
             assertNotNull(responseSignup);
             assertEquals(expectedErrorCode, responseSignup.getErrorCode());
         }
@@ -108,7 +108,7 @@ public class SignupApplicationTests {
         HttpHeaders headers = new HttpHeaders();
         headers.add("Content-Type", "application/json");
 
-        SignupApplication.SignupRequest request = new SignupApplication.SignupRequest();
+        Api.SignupRequest request = new Api.SignupRequest();
         request.setName(expectedName);
         request.setEmail(expectedEmail);
         request.setCpf(expectedCpf);
@@ -116,9 +116,9 @@ public class SignupApplicationTests {
         request.setDriver(true);
         request.setCarPlate(expectedCarPlate);
 
-        HttpEntity<SignupApplication.SignupRequest> entity = new HttpEntity<>(request, headers);
+        HttpEntity<Api.SignupRequest> entity = new HttpEntity<>(request, headers);
 
-        ResponseEntity<SignupApplication.SignupResponse> responseSignup = restTemplate.exchange(urlSignup, HttpMethod.POST, entity, SignupApplication.SignupResponse.class);
+        ResponseEntity<Api.SignupResponse> responseSignup = restTemplate.exchange(urlSignup, HttpMethod.POST, entity, Api.SignupResponse.class);
 
         assertEquals(HttpStatus.OK, responseSignup.getStatusCode());
         assertNotNull(responseSignup.getBody());
