@@ -29,35 +29,26 @@ public class SignupApplication {
             String sql = "SELECT * FROM cccat16.account WHERE email = ?";
             var acc = jdbcTemplate.queryForList(sql, request.getEmail());
 
-            if (acc.isEmpty()) {
-                if (Pattern.matches("[a-zA-Z]+ [a-zA-Z]+", request.getName())) {
-                    if (Pattern.matches("^(.+)@(.+)$", request.getEmail())) {
-                        if (validateCpf(request.getCpf())) {
-                            if (request.isDriver()) {
-                                if (Pattern.matches("[A-Z]{3}[0-9]{4}", request.getCarPlate())) {
-                                    jdbcTemplate.update("INSERT INTO cccat16.account (account_id, name, email, cpf, car_plate, is_passenger, is_driver) VALUES (?, ?, ?, ?, ?, ?, ?)",
-                                            id, request.getName(), request.getEmail(), request.getCpf(), request.getCarPlate(), request.isPassenger(), request.isDriver());
-                                    return new SignupResponse(id.toString());
-                                } else {
-                                    return new SignupResponse(-5);
-                                }
-                            } else {
-                                jdbcTemplate.update("INSERT INTO cccat16.account (account_id, name, email, cpf, car_plate, is_passenger, is_driver) VALUES (?, ?, ?, ?, ?, ?, ?)",
-                                        id, request.getName(), request.getEmail(), request.getCpf(), request.getCarPlate(), request.isPassenger(), request.isDriver());
-                                return new SignupResponse(id.toString());
-                            }
-                        } else {
-                            return new SignupResponse(-1);
-                        }
-                    } else {
-                        return new SignupResponse(-2);
-                    }
+
+            if (!acc.isEmpty()) return new SignupResponse(-4);
+            if (!(Pattern.matches("[a-zA-Z]+ [a-zA-Z]+", request.getName()))) return new SignupResponse(-3);
+            if (!Pattern.matches("^(.+)@(.+)$", request.getEmail())) return new SignupResponse(-2);
+            if (!validateCpf(request.getCpf())) return new SignupResponse(-1);
+            if (request.isDriver()) {
+                if (Pattern.matches("[A-Z]{3}[0-9]{4}", request.getCarPlate())) {
+                    jdbcTemplate.update("INSERT INTO cccat16.account (account_id, name, email, cpf, car_plate, is_passenger, is_driver) VALUES (?, ?, ?, ?, ?, ?, ?)",
+                            id, request.getName(), request.getEmail(), request.getCpf(), request.getCarPlate(), request.isPassenger(), request.isDriver());
+                    return new SignupResponse(id.toString());
                 } else {
-                    return new SignupResponse(-3);
+                    return new SignupResponse(-5);
                 }
             } else {
-                return new SignupResponse(-4);
+                jdbcTemplate.update("INSERT INTO cccat16.account (account_id, name, email, cpf, car_plate, is_passenger, is_driver) VALUES (?, ?, ?, ?, ?, ?, ?)",
+                        id, request.getName(), request.getEmail(), request.getCpf(), request.getCarPlate(), request.isPassenger(), request.isDriver());
+                return new SignupResponse(id.toString());
             }
+
+
         } finally {
             // No need to close connection explicitly, managed by Spring
         }
