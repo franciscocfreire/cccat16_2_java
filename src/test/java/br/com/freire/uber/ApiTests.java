@@ -64,8 +64,40 @@ public class ApiTests {
     }
 
     @Test
+    @DisplayName("Não Deve criar uma conta para o passageiro se o email for invalido")
+    void naoDeveCriarContaParaPassageiroSeEmailInvalido() throws JsonProcessingException {
+        int expectedErrorCode = -2;
+        String expectedName = "John Doe";
+        String expectedEmail = "john.doe" + Math.random();
+        String expectedCpf = "87748248800";
+
+        String urlSignup = "http://localhost:" + port + "/signup";
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Content-Type", "application/json");
+
+        Api.SignupRequest request = new Api.SignupRequest();
+        request.setName(expectedName);
+        request.setEmail(expectedEmail);
+        request.setCpf(expectedCpf);
+        request.setPassenger(true);
+        request.setDriver(false);
+
+        HttpEntity<Api.SignupRequest> entity = new HttpEntity<>(request, headers);
+
+        try {
+            ResponseEntity<Api.SignupResponse> responseSignup = restTemplate.exchange(urlSignup, HttpMethod.POST, entity, Api.SignupResponse.class);
+            fail("Expected HttpClientErrorException.UnprocessableEntity");
+        } catch (HttpClientErrorException.UnprocessableEntity ex) {
+            assertEquals(HttpStatus.UNPROCESSABLE_ENTITY, ex.getStatusCode());
+            Api.SignupResponse responseSignup = new ObjectMapper().readValue(ex.getResponseBodyAsString(), Api.SignupResponse.class);
+            assertNotNull(responseSignup);
+            assertEquals(expectedErrorCode, responseSignup.getErrorCode());
+        }
+    }
+
+    @Test
     @DisplayName("Não Deve criar uma conta para o passageiro se o nome for invalido")
-    void naoDeveCriarContaParaPassageiro() throws JsonProcessingException {
+    void naoDeveCriarContaParaPassageiroSeNomeInvalido() throws JsonProcessingException {
         int expectedErrorCode = -3;
         String expectedName = "John";
         String expectedEmail = "john.doe" + Math.random() + "@gmail.com";
@@ -81,6 +113,105 @@ public class ApiTests {
         request.setCpf(expectedCpf);
         request.setPassenger(true);
         request.setDriver(false);
+
+        HttpEntity<Api.SignupRequest> entity = new HttpEntity<>(request, headers);
+
+        try {
+            ResponseEntity<Api.SignupResponse> responseSignup = restTemplate.exchange(urlSignup, HttpMethod.POST, entity, Api.SignupResponse.class);
+            fail("Expected HttpClientErrorException.UnprocessableEntity");
+        } catch (HttpClientErrorException.UnprocessableEntity ex) {
+            assertEquals(HttpStatus.UNPROCESSABLE_ENTITY, ex.getStatusCode());
+            Api.SignupResponse responseSignup = new ObjectMapper().readValue(ex.getResponseBodyAsString(), Api.SignupResponse.class);
+            assertNotNull(responseSignup);
+            assertEquals(expectedErrorCode, responseSignup.getErrorCode());
+        }
+    }
+
+    @Test
+    @DisplayName("Não Deve criar uma conta para o passageiro se o email já existir")
+    void naoDeveCriarContaParaPassageiroSeEmailExistir() throws JsonProcessingException {
+        int expectedErrorCode = -4;
+        String expectedName = "John Doe";
+        String expectedEmail = "john.doe" + Math.random() + "@gmail.com";
+        String expectedCpf = "87748248800";
+
+        String urlSignup = "http://localhost:" + port + "/signup";
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Content-Type", "application/json");
+
+        Api.SignupRequest request = new Api.SignupRequest();
+        request.setName(expectedName);
+        request.setEmail(expectedEmail);
+        request.setCpf(expectedCpf);
+        request.setPassenger(true);
+        request.setDriver(false);
+
+        HttpEntity<Api.SignupRequest> entity = new HttpEntity<>(request, headers);
+
+        try {
+            restTemplate.exchange(urlSignup, HttpMethod.POST, entity, Api.SignupResponse.class);
+            restTemplate.exchange(urlSignup, HttpMethod.POST, entity, Api.SignupResponse.class);
+            fail("Expected HttpClientErrorException.UnprocessableEntity");
+        } catch (HttpClientErrorException.UnprocessableEntity ex) {
+            assertEquals(HttpStatus.UNPROCESSABLE_ENTITY, ex.getStatusCode());
+            Api.SignupResponse responseSignup = new ObjectMapper().readValue(ex.getResponseBodyAsString(), Api.SignupResponse.class);
+            assertNotNull(responseSignup);
+            assertEquals(expectedErrorCode, responseSignup.getErrorCode());
+        }
+    }
+
+    @Test
+    @DisplayName("Não Deve criar uma conta para o passageiro se o cpf for invalido")
+    void naoDeveCriarContaParaPassageiroSeCpfInvalido() throws JsonProcessingException {
+        int expectedErrorCode = -1;
+        String expectedName = "John Doe";
+        String expectedEmail = "john.doe" + Math.random() + "@gmail.com";
+        String expectedCpf = "87748248830";
+
+        String urlSignup = "http://localhost:" + port + "/signup";
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Content-Type", "application/json");
+
+        Api.SignupRequest request = new Api.SignupRequest();
+        request.setName(expectedName);
+        request.setEmail(expectedEmail);
+        request.setCpf(expectedCpf);
+        request.setPassenger(true);
+        request.setDriver(false);
+
+        HttpEntity<Api.SignupRequest> entity = new HttpEntity<>(request, headers);
+
+        try {
+            ResponseEntity<Api.SignupResponse> responseSignup = restTemplate.exchange(urlSignup, HttpMethod.POST, entity, Api.SignupResponse.class);
+            fail("Expected HttpClientErrorException.UnprocessableEntity");
+        } catch (HttpClientErrorException.UnprocessableEntity ex) {
+            assertEquals(HttpStatus.UNPROCESSABLE_ENTITY, ex.getStatusCode());
+            Api.SignupResponse responseSignup = new ObjectMapper().readValue(ex.getResponseBodyAsString(), Api.SignupResponse.class);
+            assertNotNull(responseSignup);
+            assertEquals(expectedErrorCode, responseSignup.getErrorCode());
+        }
+    }
+
+    @Test
+    @DisplayName("Não Deve criar uma conta para o motorista se a placa for invalida")
+    void naoDeveCriarContaParaMotoristaSePlacaInvalida() throws JsonProcessingException {
+        int expectedErrorCode = -5;
+        String expectedName = "John Doe";
+        String expectedEmail = "john.doe" + Math.random() + "@gmail.com";
+        String expectedCpf = "87748248800";
+        String expectedCarPlate = "AAA999";
+
+        String urlSignup = "http://localhost:" + port + "/signup";
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Content-Type", "application/json");
+
+        Api.SignupRequest request = new Api.SignupRequest();
+        request.setName(expectedName);
+        request.setEmail(expectedEmail);
+        request.setCpf(expectedCpf);
+        request.setPassenger(false);
+        request.setDriver(true);
+        request.setCarPlate(expectedCarPlate);
 
         HttpEntity<Api.SignupRequest> entity = new HttpEntity<>(request, headers);
 
