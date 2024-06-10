@@ -7,6 +7,16 @@ Arquivo init-db.sql se encontra em /resources
 docker exec -i postgres_container psql -U postgres -d app < init-db.sql
 ```
 
+Conectar no banco de dados docker-compose.yml
+
+````agsl
+psql -h localhost -p 5432 -U postgres -d app
+````
+Ver as contas cdastradas
+```agsl
+SELECT * FROM cccat16.account;
+```
+
 Code Smells
 
 - if aninhados

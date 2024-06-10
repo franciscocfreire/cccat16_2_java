@@ -1,6 +1,5 @@
 package br.com.freire.uber;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.UUID;
@@ -9,8 +8,11 @@ import java.util.regex.Pattern;
 @Component
 public class Application {
 
-    @Autowired
-    private Resource resource;
+    private final Resource resource;
+
+    public Application(Resource resource) {
+        this.resource = resource;
+    }
 
     public Api.SignupResponse signup(Api.SignupRequest input) {
         UUID accountId = UUID.randomUUID();
