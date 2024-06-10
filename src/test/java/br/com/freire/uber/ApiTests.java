@@ -66,7 +66,7 @@ public class ApiTests {
     @Test
     @DisplayName("Não Deve criar uma conta para o passageiro se o email for invalido")
     void naoDeveCriarContaParaPassageiroSeEmailInvalido() throws JsonProcessingException {
-        int expectedErrorCode = -2;
+        String expectedError = "Invalid email";
         String expectedName = "John Doe";
         String expectedEmail = "john.doe" + Math.random();
         String expectedCpf = "87748248800";
@@ -89,16 +89,16 @@ public class ApiTests {
             fail("Expected HttpClientErrorException.UnprocessableEntity");
         } catch (HttpClientErrorException.UnprocessableEntity ex) {
             assertEquals(HttpStatus.UNPROCESSABLE_ENTITY, ex.getStatusCode());
-            Api.SignupResponse responseSignup = new ObjectMapper().readValue(ex.getResponseBodyAsString(), Api.SignupResponse.class);
-            assertNotNull(responseSignup);
-            assertEquals(expectedErrorCode, responseSignup.getErrorCode());
+            ErrorResponse errorResponse = new ObjectMapper().readValue(ex.getResponseBodyAsString(), ErrorResponse.class);
+            assertNotNull(errorResponse);
+            assertEquals(expectedError, errorResponse.getMessage());
         }
     }
 
     @Test
     @DisplayName("Não Deve criar uma conta para o passageiro se o nome for invalido")
     void naoDeveCriarContaParaPassageiroSeNomeInvalido() throws JsonProcessingException {
-        int expectedErrorCode = -3;
+        String expectedError = "Invalid name";
         String expectedName = "John";
         String expectedEmail = "john.doe" + Math.random() + "@gmail.com";
         String expectedCpf = "87748248800";
@@ -121,16 +121,16 @@ public class ApiTests {
             fail("Expected HttpClientErrorException.UnprocessableEntity");
         } catch (HttpClientErrorException.UnprocessableEntity ex) {
             assertEquals(HttpStatus.UNPROCESSABLE_ENTITY, ex.getStatusCode());
-            Api.SignupResponse responseSignup = new ObjectMapper().readValue(ex.getResponseBodyAsString(), Api.SignupResponse.class);
-            assertNotNull(responseSignup);
-            assertEquals(expectedErrorCode, responseSignup.getErrorCode());
+            ErrorResponse errorResponse = new ObjectMapper().readValue(ex.getResponseBodyAsString(), ErrorResponse.class);
+            assertNotNull(errorResponse);
+            assertEquals(expectedError, errorResponse.getMessage());
         }
     }
 
     @Test
     @DisplayName("Não Deve criar uma conta para o passageiro se o email já existir")
     void naoDeveCriarContaParaPassageiroSeEmailExistir() throws JsonProcessingException {
-        int expectedErrorCode = -4;
+        String expectedError = "Account already exist";
         String expectedName = "John Doe";
         String expectedEmail = "john.doe" + Math.random() + "@gmail.com";
         String expectedCpf = "87748248800";
@@ -154,16 +154,16 @@ public class ApiTests {
             fail("Expected HttpClientErrorException.UnprocessableEntity");
         } catch (HttpClientErrorException.UnprocessableEntity ex) {
             assertEquals(HttpStatus.UNPROCESSABLE_ENTITY, ex.getStatusCode());
-            Api.SignupResponse responseSignup = new ObjectMapper().readValue(ex.getResponseBodyAsString(), Api.SignupResponse.class);
-            assertNotNull(responseSignup);
-            assertEquals(expectedErrorCode, responseSignup.getErrorCode());
+            ErrorResponse errorResponse = new ObjectMapper().readValue(ex.getResponseBodyAsString(), ErrorResponse.class);
+            assertNotNull(errorResponse);
+            assertEquals(expectedError, errorResponse.getMessage());
         }
     }
 
     @Test
     @DisplayName("Não Deve criar uma conta para o passageiro se o cpf for invalido")
     void naoDeveCriarContaParaPassageiroSeCpfInvalido() throws JsonProcessingException {
-        int expectedErrorCode = -1;
+        String expectedError = "Invalid CPF";
         String expectedName = "John Doe";
         String expectedEmail = "john.doe" + Math.random() + "@gmail.com";
         String expectedCpf = "87748248830";
@@ -186,16 +186,16 @@ public class ApiTests {
             fail("Expected HttpClientErrorException.UnprocessableEntity");
         } catch (HttpClientErrorException.UnprocessableEntity ex) {
             assertEquals(HttpStatus.UNPROCESSABLE_ENTITY, ex.getStatusCode());
-            Api.SignupResponse responseSignup = new ObjectMapper().readValue(ex.getResponseBodyAsString(), Api.SignupResponse.class);
-            assertNotNull(responseSignup);
-            assertEquals(expectedErrorCode, responseSignup.getErrorCode());
+            ErrorResponse errorResponse = new ObjectMapper().readValue(ex.getResponseBodyAsString(), ErrorResponse.class);
+            assertNotNull(errorResponse);
+            assertEquals(expectedError, errorResponse.getMessage());
         }
     }
 
     @Test
     @DisplayName("Não Deve criar uma conta para o motorista se a placa for invalida")
     void naoDeveCriarContaParaMotoristaSePlacaInvalida() throws JsonProcessingException {
-        int expectedErrorCode = -5;
+        String expectedError = "Invalid car plate";
         String expectedName = "John Doe";
         String expectedEmail = "john.doe" + Math.random() + "@gmail.com";
         String expectedCpf = "87748248800";
@@ -220,9 +220,9 @@ public class ApiTests {
             fail("Expected HttpClientErrorException.UnprocessableEntity");
         } catch (HttpClientErrorException.UnprocessableEntity ex) {
             assertEquals(HttpStatus.UNPROCESSABLE_ENTITY, ex.getStatusCode());
-            Api.SignupResponse responseSignup = new ObjectMapper().readValue(ex.getResponseBodyAsString(), Api.SignupResponse.class);
-            assertNotNull(responseSignup);
-            assertEquals(expectedErrorCode, responseSignup.getErrorCode());
+            ErrorResponse errorResponse = new ObjectMapper().readValue(ex.getResponseBodyAsString(), ErrorResponse.class);
+            assertNotNull(errorResponse);
+            assertEquals(expectedError, errorResponse.getMessage());
         }
     }
 

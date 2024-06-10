@@ -15,12 +15,12 @@ public class Application {
     public Api.SignupResponse signup(Api.SignupRequest input) {
         UUID accountId = UUID.randomUUID();
         var existingAccount = resource.getAccountByEmail(input.getEmail());
-        if (existingAccount.isPresent()) return new Api.SignupResponse(-4);
-        if (!(Pattern.matches("[a-zA-Z]+ [a-zA-Z]+", input.getName()))) return new Api.SignupResponse(-3);
-        if (!Pattern.matches("^(.+)@(.+)$", input.getEmail())) return new Api.SignupResponse(-2);
-        if (!validateCpf(input.getCpf())) return new Api.SignupResponse(-1);
+        if (existingAccount.isPresent()) throw new ValidationError("Account already exist", -4);
+        if (!(Pattern.matches("[a-zA-Z]+ [a-zA-Z]+", input.getName()))) throw new ValidationError("Invalid name", -3);
+        if (!Pattern.matches("^(.+)@(.+)$", input.getEmail())) throw new ValidationError("Invalid email", -2);
+        if (!validateCpf(input.getCpf())) throw new ValidationError("Invalid CPF", -1);
         if (input.isDriver() && !input.getCarPlate().isEmpty() && !Pattern.matches("[A-Z]{3}[0-9]{4}", input.getCarPlate()))
-            return new Api.SignupResponse(-5);
+            throw new ValidationError("Invalid car plate", -5);
         resource.saveAccount(mapperInputToAccount(input, accountId.toString()));
         return new Api.SignupResponse(accountId.toString());
     }

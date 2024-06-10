@@ -5,14 +5,13 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import java.util.Map;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 public class ApplicationTest {
     @Autowired
     Application application;
+
     @Test
     @DisplayName("Deve criar uma conta para o passageiro")
     void deveCriarContaParaPassageiro() {
@@ -33,7 +32,7 @@ public class ApplicationTest {
         assertNotNull(responseSignup.getAccountId());
 
         Application.Account account = application.getAccount(responseSignup.getAccountId());
-        assertEquals(expectedName,account.getName());
+        assertEquals(expectedName, account.getName());
         assertEquals(expectedEmail, account.getEmail());
         assertEquals(expectedCpf, account.getCpf());
     }
@@ -54,11 +53,11 @@ public class ApplicationTest {
         request.setPassenger(true);
         request.setDriver(false);
 
-        Api.SignupResponse responseSignup = application.signup(request);
+        ValidationError validationError = assertThrows(ValidationError.class, () -> {
+            application.signup(request);
+        });
 
-        assertNotNull(responseSignup);
-        assertEquals(expectedError, responseSignup.getErrorCode());
-        assertNull(responseSignup.getAccountId());
+        assertEquals(expectedError, validationError.getErrorCode());
     }
 
     @Test
@@ -84,7 +83,7 @@ public class ApplicationTest {
         assertNotNull(responseSignup.getAccountId());
 
         Application.Account account = application.getAccount(responseSignup.getAccountId());
-        assertEquals(expectedName,account.getName());
+        assertEquals(expectedName, account.getName());
         assertEquals(expectedEmail, account.getEmail());
         assertEquals(expectedCpf, account.getCpf());
     }

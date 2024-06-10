@@ -16,14 +16,20 @@ public class Api {
     }
 
     @PostMapping("/signup")
-    public ResponseEntity<Api.SignupResponse> signup(@RequestBody SignupRequest request) {
-        Api.SignupResponse signupResponse = application.signup(request);
-        if (signupResponse.getErrorCode() != 0) return ResponseEntity.unprocessableEntity().body(signupResponse);
-        return ResponseEntity.ok(signupResponse);
+    public ResponseEntity<?> signup(@RequestBody SignupRequest request) {
+        try {
+            Api.SignupResponse signupResponse = application.signup(request);
+            return ResponseEntity.ok(signupResponse);
+        } catch (Exception e) {
+            ErrorResponse errorResponse = new ErrorResponse(e.getMessage(), -1);
+            return ResponseEntity.unprocessableEntity().body(errorResponse);
+        }
+
+
     }
 
     @GetMapping("/accounts/{accountId}")
-    public ResponseEntity<Application.Account> getAccount(@PathVariable String accountId) {
+    public ResponseEntity<?> getAccount(@PathVariable String accountId) {
         Application.Account account = application.getAccount(accountId);
         if (account != null) return ResponseEntity.ok(account);
         return ResponseEntity.notFound().build();
