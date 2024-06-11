@@ -4,8 +4,10 @@ import br.com.freire.uber.driver.SignupRequest;
 import br.com.freire.uber.driver.SignupResponse;
 import br.com.freire.uber.resource.MailerGateway;
 import br.com.freire.uber.resource.Resource;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.stereotype.Component;
 
+import java.util.Map;
 import java.util.UUID;
 import java.util.regex.Pattern;
 
@@ -14,13 +16,17 @@ public class Signup {
 
     private final Resource resource;
     private final MailerGateway mailerGateway;
+    private final ObjectMapper objectMapper;
+
 
     public Signup(Resource resource, MailerGateway mailerGateway) {
         this.resource = resource;
         this.mailerGateway = mailerGateway;
+        this.objectMapper = new ObjectMapper();
     }
 
-    public SignupResponse signup(SignupRequest input) {
+    public SignupResponse execute(Map<String, String> request) {
+        SignupRequest input = objectMapper.convertValue(request, SignupRequest.class);
         UUID accountId = UUID.randomUUID();
         var existingAccount = resource.getAccountByEmail(input.getEmail());
         if (existingAccount.isPresent()) throw new ValidationError("Account already exist", -4);

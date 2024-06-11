@@ -34,3 +34,5 @@ Possibilidade de usar uma implementação em memoria (AccountDAOMemory) para os 
 Organizando em pacotes. "Pacotes não são camadas. Camada é logica"]
 
 Facilidade da inversão de controle para utilização nos testes qual implementação usar
+
+Possibilidade de incluir um novo driver(CLI)

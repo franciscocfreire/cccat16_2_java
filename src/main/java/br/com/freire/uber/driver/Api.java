@@ -3,6 +3,8 @@ package br.com.freire.uber.driver;
 import br.com.freire.uber.application.Account;
 import br.com.freire.uber.application.GetAccount;
 import br.com.freire.uber.application.Signup;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.http.ResponseEntity;
@@ -16,14 +18,13 @@ public class Api {
     @Autowired
     Signup signup;
 
-    public static void main(String[] args) {
-        SpringApplication.run(Api.class, args);
-    }
+    private final ObjectMapper objectMapper = new ObjectMapper();
 
     @PostMapping("/signup")
     public ResponseEntity<?> signup(@RequestBody SignupRequest request) {
         try {
-            SignupResponse signupResponse = signup.signup(request);
+            SignupResponse signupResponse = signup.execute(objectMapper.convertValue(request, new TypeReference<>() {
+            }));
             return ResponseEntity.ok(signupResponse);
         } catch (Exception e) {
             ErrorResponse errorResponse = new ErrorResponse(e.getMessage(), -1);

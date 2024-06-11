@@ -1,7 +1,6 @@
-package br.com.freire.uber;
+package br.com.freire.uber.resource;
 
 import br.com.freire.uber.application.Account;
-import br.com.freire.uber.resource.AccountDAO;
 
 import java.util.HashMap;
 import java.util.Map;

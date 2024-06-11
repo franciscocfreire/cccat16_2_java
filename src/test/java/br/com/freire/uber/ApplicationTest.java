@@ -6,6 +6,8 @@ import br.com.freire.uber.application.Signup;
 import br.com.freire.uber.application.ValidationError;
 import br.com.freire.uber.driver.SignupRequest;
 import br.com.freire.uber.driver.SignupResponse;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +21,9 @@ public class ApplicationTest {
     GetAccount getAccount;
     @Autowired
     Signup signup;
+
+    @Autowired
+    ObjectMapper objectMapper;
 
     @Test
     @DisplayName("Deve criar uma conta para o passageiro")
@@ -34,7 +39,8 @@ public class ApplicationTest {
         request.setPassenger(true);
         request.setDriver(false);
 
-        SignupResponse responseSignup = signup.signup(request);
+        SignupResponse responseSignup = signup.execute(objectMapper.convertValue(request, new TypeReference<>() {
+        }));
 
         assertNotNull(responseSignup);
         assertNotNull(responseSignup.getAccountId());
@@ -62,7 +68,8 @@ public class ApplicationTest {
         request.setDriver(false);
 
         ValidationError validationError = assertThrows(ValidationError.class, () -> {
-            signup.signup(request);
+            signup.execute(objectMapper.convertValue(request, new TypeReference<>() {
+            }));
         });
 
         assertEquals(expectedError, validationError.getErrorCode());
@@ -85,7 +92,8 @@ public class ApplicationTest {
         request.setDriver(true);
         request.setCarPlate(expectedCarPlate);
 
-        SignupResponse responseSignup = signup.signup(request);
+        SignupResponse responseSignup = signup.execute(objectMapper.convertValue(request, new TypeReference<>() {
+        }));
 
         assertNotNull(responseSignup);
         assertNotNull(responseSignup.getAccountId());
