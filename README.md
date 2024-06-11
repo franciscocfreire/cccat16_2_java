@@ -29,3 +29,5 @@ Isso fez a possibilidade de fazer testes apenas da camada de aplicação
 
 Separação de responsabilidade do Resource(Driven Actor)
 
+Possibilidade de usar uma implementação em memoria (AccountDAOMemory) para os testes
+
