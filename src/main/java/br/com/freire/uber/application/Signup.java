@@ -2,6 +2,7 @@ package br.com.freire.uber.application;
 
 import br.com.freire.uber.driver.SignupRequest;
 import br.com.freire.uber.driver.SignupResponse;
+import br.com.freire.uber.resource.MailerGateway;
 import br.com.freire.uber.resource.Resource;
 import org.springframework.stereotype.Component;
 
@@ -12,9 +13,11 @@ import java.util.regex.Pattern;
 public class Signup {
 
     private final Resource resource;
+    private final MailerGateway mailerGateway;
 
-    public Signup(Resource resource) {
+    public Signup(Resource resource, MailerGateway mailerGateway) {
         this.resource = resource;
+        this.mailerGateway = mailerGateway;
     }
 
     public SignupResponse signup(SignupRequest input) {
@@ -27,6 +30,7 @@ public class Signup {
         if (input.isDriver() && !input.getCarPlate().isEmpty() && !Pattern.matches("[A-Z]{3}[0-9]{4}", input.getCarPlate()))
             throw new ValidationError("Invalid car plate", -5);
         resource.saveAccount(mapperInputToAccount(input, accountId.toString()));
+        mailerGateway.send(input.getEmail(), "Welcome", "");
         return new SignupResponse(accountId.toString());
     }
 
