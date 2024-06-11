@@ -1,5 +1,6 @@
-package br.com.freire.uber;
+package br.com.freire.uber.resource;
 
+import br.com.freire.uber.application.Account;
 import org.springframework.stereotype.Repository;
 
 import java.util.Map;
@@ -21,7 +22,7 @@ public class Resource {
         return accountDAO.getAccountById(accountId);
     }
 
-    public String saveAccount(Application.Account account) {
+    public String saveAccount(Account account) {
         return accountDAO.saveAccount(account);
     }
 }

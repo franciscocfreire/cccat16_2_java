@@ -1,4 +1,4 @@
-package br.com.freire.uber;
+package br.com.freire.uber.driver;
 
 public class ErrorResponse {
     private String message;

@@ -31,3 +31,5 @@ Separação de responsabilidade do Resource(Driven Actor)
 
 Possibilidade de usar uma implementação em memoria (AccountDAOMemory) para os testes
 
+Organizando em pacotes. "Pacotes não são camadas. Camada é logica"
+

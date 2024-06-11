@@ -1,5 +1,7 @@
 package br.com.freire.uber;
 
+import br.com.freire.uber.application.Account;
+import br.com.freire.uber.resource.Resource;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,7 +27,7 @@ class ResourceTest {
         String expectedEmail = "john.doe" + Math.random() + "@gmail.com";
         String expectedCpf = "87748248800";
 
-        Application.Account account = new Application.Account();
+        Account account = new Account();
         account.setAccountId(UUID.randomUUID().toString());
 
         account.setName(expectedName);
@@ -54,7 +56,7 @@ class ResourceTest {
         String expectedEmail = "john.doe" + Math.random() + "@gmail.com";
         String expectedCpf = "87748248800";
 
-        Application.Account account = new Application.Account();
+        Account account = new Account();
         account.setAccountId(UUID.randomUUID().toString());
         account.setName(expectedName);
         account.setEmail(expectedEmail);

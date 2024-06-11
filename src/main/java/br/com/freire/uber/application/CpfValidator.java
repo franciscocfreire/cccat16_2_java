@@ -1,4 +1,4 @@
-package br.com.freire.uber;
+package br.com.freire.uber.application;
 
 public class CpfValidator {
 

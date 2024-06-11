@@ -1,5 +1,7 @@
 package br.com.freire.uber;
 
+import br.com.freire.uber.application.Account;
+import br.com.freire.uber.resource.AccountDAO;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Component;
 
@@ -12,8 +14,8 @@ import java.util.UUID;
 @Primary
 public class AccountDAOMemory implements AccountDAO {
 
-    Map<String, Application.Account> mapAccountByAccountId;
-    Map<String, Application.Account> mapAccountByAccountEmail;
+    Map<String, Account> mapAccountByAccountId;
+    Map<String, Account> mapAccountByAccountEmail;
 
     public AccountDAOMemory() {
         this.mapAccountByAccountId = new HashMap<>();
@@ -31,13 +33,13 @@ public class AccountDAOMemory implements AccountDAO {
     }
 
     @Override
-    public String saveAccount(Application.Account account) {
+    public String saveAccount(Account account) {
         this.mapAccountByAccountId.put(account.getAccountId(),account);
         this.mapAccountByAccountEmail.put(account.getEmail(),account);
         return account.getAccountId();
     }
 
-    private Map<String, Object> convertAccountToMap(Application.Account account) {
+    private Map<String, Object> convertAccountToMap(Account account) {
         if (account == null) return null;
         Map<String, Object> accountMap = new HashMap<>();
         accountMap.put("account_id", UUID.fromString(account.getAccountId()));

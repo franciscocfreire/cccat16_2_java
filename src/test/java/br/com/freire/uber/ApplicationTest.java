@@ -1,5 +1,11 @@
 package br.com.freire.uber;
 
+import br.com.freire.uber.application.Account;
+import br.com.freire.uber.application.GetAccount;
+import br.com.freire.uber.application.Signup;
+import br.com.freire.uber.application.ValidationError;
+import br.com.freire.uber.driver.SignupRequest;
+import br.com.freire.uber.driver.SignupResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,7 +16,9 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest
 public class ApplicationTest {
     @Autowired
-    Application application;
+    GetAccount getAccount;
+    @Autowired
+    Signup signup;
 
     @Test
     @DisplayName("Deve criar uma conta para o passageiro")
@@ -19,19 +27,19 @@ public class ApplicationTest {
         String expectedEmail = "john.doe" + Math.random() + "@gmail.com";
         String expectedCpf = "87748248800";
 
-        Api.SignupRequest request = new Api.SignupRequest();
+        SignupRequest request = new SignupRequest();
         request.setName(expectedName);
         request.setEmail(expectedEmail);
         request.setCpf(expectedCpf);
         request.setPassenger(true);
         request.setDriver(false);
 
-        Api.SignupResponse responseSignup = application.signup(request);
+        SignupResponse responseSignup = signup.signup(request);
 
         assertNotNull(responseSignup);
         assertNotNull(responseSignup.getAccountId());
 
-        Application.Account account = application.getAccount(responseSignup.getAccountId());
+        Account account = getAccount.getAccount(responseSignup.getAccountId());
         assertEquals(expectedName, account.getName());
         assertEquals(expectedEmail, account.getEmail());
         assertEquals(expectedCpf, account.getCpf());
@@ -46,7 +54,7 @@ public class ApplicationTest {
         String expectedEmail = "john.doe" + Math.random() + "@gmail.com";
         String expectedCpf = "87748248800";
 
-        Api.SignupRequest request = new Api.SignupRequest();
+        SignupRequest request = new SignupRequest();
         request.setName(expectedName);
         request.setEmail(expectedEmail);
         request.setCpf(expectedCpf);
@@ -54,7 +62,7 @@ public class ApplicationTest {
         request.setDriver(false);
 
         ValidationError validationError = assertThrows(ValidationError.class, () -> {
-            application.signup(request);
+            signup.signup(request);
         });
 
         assertEquals(expectedError, validationError.getErrorCode());
@@ -69,7 +77,7 @@ public class ApplicationTest {
         String expectedCarPlate = "DBG9456";
 
 
-        Api.SignupRequest request = new Api.SignupRequest();
+        SignupRequest request = new SignupRequest();
         request.setName(expectedName);
         request.setEmail(expectedEmail);
         request.setCpf(expectedCpf);
@@ -77,12 +85,12 @@ public class ApplicationTest {
         request.setDriver(true);
         request.setCarPlate(expectedCarPlate);
 
-        Api.SignupResponse responseSignup = application.signup(request);
+        SignupResponse responseSignup = signup.signup(request);
 
         assertNotNull(responseSignup);
         assertNotNull(responseSignup.getAccountId());
 
-        Application.Account account = application.getAccount(responseSignup.getAccountId());
+        Account account = getAccount.getAccount(responseSignup.getAccountId());
         assertEquals(expectedName, account.getName());
         assertEquals(expectedEmail, account.getEmail());
         assertEquals(expectedCpf, account.getCpf());
